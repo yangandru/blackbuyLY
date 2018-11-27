@@ -135,6 +135,21 @@ const store = new Vuex.Store({
         // state.cartData[obj.goodId]=obj.goodNum;
         Vue.set(state.cartData,obj.goodId,obj.goodNum)
       }
+    },
+    // 增加一个修改数据的方法
+    updateCartData(state,obj){
+      // console.log(obj)
+      // 接收到数据直接赋值, 
+      state.cartData = obj;
+    },
+    // 删除某一条数据的方法
+    delGoodsById(state,id){
+      // console.log(id)
+      // delete.state.cartData
+      // delete删除的属性 Vue无法跟踪
+      // 必须使用Vue.delete 才可以同步更新数据
+      // 参数1: 
+      Vue.delete(state.cartData,id)
     }
   }
 })
