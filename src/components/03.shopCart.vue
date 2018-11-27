@@ -55,16 +55,16 @@
                                     <th width="48" align="center">
                                         <a>选择</a>
                                     </th>
-                                    <th align="left" colspan="2">商品信息</th>
+                                    <th align="left">商品信息</th>
                                     <th width="84" align="left">单价</th>
                                     <th width="104" align="center">数量</th>
                                     <th width="104" align="left">金额(元)</th>
                                     <th width="54" align="center">操作</th>
                                 </tr>
-                                 <!-- 有数据的它提示内容 -->
+                                <!-- 有数据的提示内容 -->
                                 <tr v-for="(item, index) in goodsList" :key="item.id">
                                     <td>
-                                         <el-switch
+                                        <el-switch
                                             v-model="item.isSelected"
                                             active-color="#13ce66"
                                             inactive-color="#9e9e9e"
@@ -75,15 +75,26 @@
                                         <span>{{item.title}}</span>
                                     </td>
                                     <td>{{item.sell_price}}</td>
-                                    <td><el-input-number size="mini" v-model="item.buycount" :min="0"></el-input-number></td>
-                                    <td>{{item.buycount *item.sell_price}}</td>
                                     <td>
-                                        <!-- <el-input-number v-model="item.buycount" :min="0"></el-input-number> -->
-                                        <el-button type="danger" @click="delOne(item.id)" icon="el-icon-delete" circle></el-button>
+                                        <el-input-number
+                                            v-model="item.buycount"
+                                            :min="0"
+                                            size="mini"
+                                        ></el-input-number>
+                                    </td>
+                                    <td>{{item.buycount*item.sell_price}}</td>
+                                    <td>
+                                        <!-- 删除按钮 -->
+                                        <el-button
+                                            @click="delOne(item.id)"
+                                            type="danger"
+                                            icon="el-icon-delete"
+                                            circle
+                                        ></el-button>
                                     </td>
                                 </tr>
-                                 <!-- 没有数据的提示内容 -->
-                               <tr v-show="goodsList.length==0">
+                                <!-- 没有数据的提示内容 -->
+                                <tr v-show="goodsList.length==0">
                                     <td colspan="10">
                                         <div class="msg-tips">
                                             <div class="icon warning">
@@ -118,12 +129,13 @@
                                 class="button"
                                 onclick="javascript:location.href='/index.html';"
                             >继续购物</button>
-                            <button
-                                class="submit"
-                                onclick="formSubmit(this, '/', '/shopping.html');"
-                            >立即结算</button>
+                            <router-link to="/order">
+                                <button
+                                    class="submit"
+                                >立即结算</button>
+                            </router-link>
                         </div>
-                     </div>
+                    </div>
                     <!--购物车底部-->
                 </div>
             </div>
@@ -140,36 +152,37 @@ export default {
     };
   },
   // 方法
-  methods:{
-      delOne(id){
-         this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          center: true
-        }).then(() => {
-            // 删除当前组件的数据
-            // 提示用户
-            this.goodsList.forEach((v,index)=>{
-                if(v.id==id){
-                    this.goodsList.splice(index,1)
-                } 
-            })
-            // 删除当前Vuex中的数据
-            // this.$store.commit("delGoodsById",id)
-            
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+  methods: {
+    delOne(id) {
+      this.$confirm("此操作将删除该商品, 是否删除?", "温馨提示", {
+        confirmButtonText: "狠心删除",
+        cancelButtonText: "继续保留",
+        type: "warning"
+      })
+        .then(() => {
+          // 删除数据
+          // 删除当前这个组件中的数据
+          this.goodsList.forEach((v, index) => {
+            if (v.id == id) {
+              this.goodsList.splice(index, 1);
+            }
           });
-        }).catch(() => {
+          // 删除Vuex中的数据
+          // 因为 watch 会监控数据的改变 修改 删除 都会触发 同步更新Vuex中的数据
+          //   this.$store.commit('delGoodsById',id);
+          // 提示用户
           this.$message({
-            type: 'info',
-            message: '已取消删除'
+            type: "success",
+            message: "删除成功!"
           });
-            });
-      }
-     
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    }
   },
   // 计算属性
   computed: {
@@ -179,7 +192,7 @@ export default {
       this.goodsList.forEach(v => {
         // 如果被选中
         if (v.isSelected == true) {
-          // 累加上购买的数量
+          // 累加上购买个数
           num += v.buycount;
         }
       });
@@ -191,60 +204,68 @@ export default {
       this.goodsList.forEach(v => {
         // 如果被选中
         if (v.isSelected == true) {
-          // 累加上的购买数量
+          // 累加上购买个数
           price += v.buycount * v.sell_price;
         }
       });
       return price;
     }
   },
-  // 生命周期
+  //   生命周期函数
   created() {
-    // 生成数据 id1,id2,id3
+    // 生成 数据 id1,id2,id3
     let ids = "";
-    // 通过Vuex 获取数据
+    // 通过 Vuex获取数据
     for (const key in this.$store.state.cartData) {
       ids += key;
       ids += ",";
     }
-    // 取消最后一个
-    //   console.log(ids.slice(0,ids.length-1));
+    // 取消最后一个,
+    // console.log(ids.slice(0,ids.length-1));
     ids = ids.slice(0, ids.length - 1);
+
     // 调用接口
     this.$axios.get(`site/comment/getshopcargoods/${ids}`).then(result => {
       //   console.log(result);
-      // 服务器返回的数据是没有个数的 所以要自行拼接
+      // 第一次赋值的时候 message的每个对象中 没有 isSelected
+      //   this.goodsList = result.data.message;
+      // 服务器返回的数据中是没有个数的 所以要自行拼接
       result.data.message.forEach(v => {
-        // 通过id 获取个数, 赋值给v.buycount
+        //   通过id 获取个数 赋值给v.buycount
         v.buycount = this.$store.state.cartData[v.id];
-        // 增加一个是否被选择的字段, 用来切换 页面上switch 开关
+        // 增加一个是否被选择的字段 用来切换 页面中的switch 开关
         v.isSelected = true;
+        // Vue.set(v,'isSelected',true);
+        // 如果是在组件中使用set 需要通过this.$set才可以访问
+        // this.$set(v, "isSelected", true);
       });
-      console.log(result);
+      //   console.log(this.goodsList);
+      // 如果 是先加字段 再 赋值给 vue的数据 就不需要使用$set
       this.goodsList = result.data.message;
     });
   },
   // 使用watch 观察数据的改变
   watch: {
     goodsList: {
-      // 引用类型 俩次的值都是一样的
+      // 引用类型 两次的值都是一样的
       handler: function(val, oldVal) {
         // console.log(val);
-        // console.log(oldVal);
-        // 最终要的数据是{id}
+        //   console.log(oldVal);
+        // 最终要的数据是 {id:个数}
         let obj = {};
         val.forEach(v => {
           // 动态的增加属性
           obj[v.id] = v.buycount;
         });
-        // console.log(obj)
+        // console.log(obj);
         // 同步修改 Vuex中的数据
         this.$store.commit("updateCartData", obj);
+        // 可以直接访问到 但还是建议 使用 官方的方法进行修改
+        // this.$store.state.cartData = obj;
       },
-     
-    },
-     // 深度观察 内部的属性改变也会触发
+      //   深度观察 内部的属性改变也会触发
       deep: true
+    }
   }
 };
 </script>
@@ -252,6 +273,7 @@ export default {
 td img {
   width: 100px;
 }
+/* 子代选择器 */
 td > span {
   margin-left: 10px;
 }

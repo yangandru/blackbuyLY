@@ -273,7 +273,7 @@ export default {
             // console.log(result);
             // 判断是否成功
             if (result.data.status == 0) {
-              this.$Message.success("发表成功");
+              this.$Message.success("result.data.message");
               // 清空评论
               this.comment = "";
               // 从新获取评论
