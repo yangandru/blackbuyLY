@@ -25,6 +25,8 @@ Vue.use(ProductZoomer);
 // 导入axios
 import axios from "axios";
 Vue.prototype.$axios = axios;
+// 设置上带cookie
+axios.defaults.withCredentials=true;//让ajax携带cookie
 // 使用axios来设置
 axios.defaults.baseURL = 'http://111.230.232.110:8899/';
 // 抽取基础地址
@@ -42,6 +44,7 @@ import index from './components/index.vue'
 import detail from './components/02.detail.vue'
 import shopCart from "./components/03.shopCart.vue";
 import order from "./components/04.order.vue";
+import login from "./components/05.login.vue";
 
 // 写路由规则
 let routes = [
@@ -64,9 +67,15 @@ let routes = [
     component: shopCart
   },
   // 去订单下确定订单
+  // 动态路由匹配
   { 
-    path: "/order",
+    path: "/order/:ids",
     component: order
+  },
+   // 去登录下确定订单
+   { 
+    path: "/login",
+    component: login
   },
 ]
 
@@ -80,7 +89,7 @@ router.beforeEach((to, from, next) => {
   console.log("守卫啦!!!!");
   // console.log(to);
   // console.log(from);
-  if (to.path == "/order") {
+  if (to.path.indexOf('/order')!=-1) {
     // 正要去订单页
     // 必须先判断登录
     axios.get("site/account/islogin").then(result => {
@@ -89,13 +98,14 @@ router.beforeEach((to, from, next) => {
         // 提示用户
         Vue.prototype.$Message.warning("请先登录");
         // 跳转页面(路由)
-        router.push("/index");
+        router.push("/login");
       }
     });
   } else {
     // next 如果不执行 就不会路由跳转
     next();
   }
+  next();
 });
 
 // 实例化之前, 注册全局过滤器
@@ -124,8 +134,11 @@ const store = new Vuex.Store({
   state: {
     // count: 0
     cartData:JSON.parse(window.localStorage.getItem('hm24')) || {
-      38:0,  
-    }
+      // 38:0,  
+    },
+    // 是否登录的字段
+    isLogin:false
+
   },
   // vuex计算属性
   getters:{
@@ -179,6 +192,10 @@ const store = new Vuex.Store({
       // 必须使用Vue.delete 才可以同步更新数据
       // 参数1: 
       Vue.delete(state.cartData,id)
+    },
+    //  修改登录状态
+    changeLogin(state,isLogin ){
+      state.isLogin = isLogin;
     }
   }
 })
@@ -186,11 +203,35 @@ const store = new Vuex.Store({
 // 浏览器关闭 保存数据
 window.onbeforeunload = function(){
   window.localStorage.setItem('hm24',JSON.stringify(store.state.cartData))
-}
+};
+// window.onload = function(){}
 
+// 实例化Vue
 new Vue({
   render: h => h(App),
   store,
   // 传入路由对象
-  router
+  router,
+  // 生命周期函数
+  created() {
+    // 调用登录判断
+    // 根据结果判断是否登录
+    axios.get("site/account/islogin").then(result => {
+      console.log(result);
+    if (result.data.code == "nologin") {
+      // 提示用户
+      Vue.prototype.$Message.warning("请先登录");
+      // 跳转页面(路由)
+      router.push("/login");
+
+
+} else {
+  // next 如果不执行 就不会路由跳转
+  // 修改仓库中的状态
+  store.state.isLogin = true;
+  // next();
+}
+});
+
+  }
 }).$mount('#app')

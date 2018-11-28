@@ -10,16 +10,18 @@
                     <a target="_blank" href="#"></a>
                 </div>
                 <div id="menu" class="right-box">
-                    <span style="display: none;">
-                        <a href="" class="">登录</a>
+                    <!-- 没登录显示 -->
+                    <span style="display: none;" v-show="$store.state.isLogin==false">
+                        <router-link to="/login">登录</router-link>
                         <strong>|</strong>
                         <a href="" class="">注册</a>
-                        <strong>|</strong>
+                        <strong>|</strong>  
                     </span>
-                    <span>
+                     <!-- 登录了显示 -->
+                    <span v-show="$store.state.isLogin==true">
                         <a href="" class="">会员中心</a>
                         <strong>|</strong>
-                        <a>退出</a>
+                        <a @click="logout">退出</a>
                         <strong>|</strong>
                     </span>
                     <!-- <a href="" class=""> -->
@@ -126,6 +128,23 @@ export default {
   name: 'app',
   created(){
       console.log(this.$store.state.count)
+  },
+  // 事件
+  methods:{
+      logout(){
+          // 调用登出接口即可
+          this.$axios.get('site/account/logout').then(result=>{
+            //   console.log(result);
+              if(result.data.status===0){
+                  this.$Message.success(result.data.message);
+                  // 编程式导航  去首页
+                  this.$router.push('/index');
+                  //  修改Vuex 中的 登录字段 为false
+                  this.$store.commit('changeLogin',false)
+              }
+          })
+
+      }
   }
 }
 </script>

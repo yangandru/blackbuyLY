@@ -244,27 +244,23 @@
                                         <th width="84" align="center">购买数量</th>
                                         <th width="104" align="left">金额(元)</th>
                                     </tr>
-                                    <tr>
-                                        <td width="68">
-                                            <a target="_blank" href="/goods/show-89.html">
-                                                <img
-                                                    src="http://39.108.135.214:8899/upload/201504/20/thumb_201504200046589514.jpg"
-                                                    class="img"
-                                                >
-                                            </a>
+                                    <tr v-for="(item, index) in goodsList" :key="item.id">
+                                         <td width="68">
+                                                <!-- <a target="_blank" href="/goods/show-89.html"> -->
+                                                <router-link :to="'/detail/'+item.id">
+                          <img :src="item.img_url" class="img">
+                        </router-link>
+                                                <!-- </a> -->
+                                              </td>
+                                        <td>
+                                            <router-link :to="'/detail/'+item.id">{{item.title}}</router-link>
                                         </td>
                                         <td>
-                                            <a
-                                                target="_blank"
-                                                href="/goods/show-89.html"
-                                            >小米（Mi）小米Note 16G双网通版</a>
+                                            <span class="red">￥{{item.sell_price}}</span>
                                         </td>
+                                        <td align="center">{{item.buycount}}</td>
                                         <td>
-                                            <span class="red">￥2299.00</span>
-                                        </td>
-                                        <td align="center">1</td>
-                                        <td>
-                                            <span class="red">￥2299.00</span>
+                                            <span class="red">￥{{item.buycount*item.sell_price}}</span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -289,11 +285,11 @@
                                 <div class="right-box">
                                     <p>
                                         商品
-                                        <label class="price">1</label>件&nbsp;&nbsp;&nbsp;&nbsp; 商品金额：￥
+                                        <label class="price">{{totalCount}}</label>件&nbsp;&nbsp;&nbsp;&nbsp; 商品金额：￥
                                         <label
                                             id="goodsAmount"
                                             class="price"
-                                        >2299.00</label>元&nbsp;&nbsp;&nbsp;&nbsp;
+                                        >{{totalPrice}}</label>元&nbsp;&nbsp;&nbsp;&nbsp;
                                     </p>
                                     <p>
                                         运费：￥
@@ -319,23 +315,61 @@
 <script>
 export default {
   name: "order",
-    // created() {
-        // created 比较晚 用户可以看到 页面一闪而过
-//     beforeCreate() { // 虽然比created 早了一些 但还是 一闪而过
-//   // 查询是否登录
-//   this.$axios.get("site/account/islogin").then(result => {
-//     //   console.log(result);
-//     if (result.data.code == "nologin") {
-//       // 提示用户
-//       this.$Message.warning("请先登录");
-//       // 跳转页面(路由)
-//       setTimeout(() => {
-//         this.$router.push("/index");
-//       }, 1000);
-//     }
-//   });
-//     }
-
+  data: function() {
+    return {
+      // 商品id
+      ids: "",
+      // 商品列表
+      goodsList: [],
+      // 商品个数
+      totalCount: 0,
+      // 商品总价格(不包含运费)
+      totalPrice: 0
+    };
+  },
+ created() {
+      // // 路由对象 可以用来跳转页面 
+      //   console.log(this.$router);
+      // 路由跳转 携带的信息
+      console.log(this.$route);
+      this.ids=this.$route.params.ids;
+      // 调用接口
+      this.$axios.get(`site/validate/order/getgoodslist/${this.ids}`).then(result=>{
+        //   console.log(result);
+        // buycount 服务器是不知道的 我们要人为的 设置
+        this.goodsList = result.data.message;
+        // 动态的修改buycount的值 
+        result.data.message.forEach(v=>{
+            // 通过Vuex获取购买数量
+            // 因为buycount这个字段 一直都在 所以 不需要Vue.set 
+            // 如果是 本来没有 自己额外增加的 才需要 
+            v.buycount = this.$store.state.cartData[v.id];
+            // 累加总个数
+            this.totalCount+=v.buycount; 
+            // 累加总金额
+            this.totalPrice+=(v.buycount*v.sell_price)
+        })
+        // console.log(this.goodsList);
+        // console.log(result);
+      })
+    
+  },
+  // created() {
+  // created 比较晚 用户可以看到 页面一闪而过
+  //     beforeCreate() { // 虽然比created 早了一些 但还是 一闪而过
+  //   // 查询是否登录
+  //   this.$axios.get("site/account/islogin").then(result => {
+  //     //   console.log(result);
+  //     if (result.data.code == "nologin") {
+  //       // 提示用户
+  //       this.$Message.warning("请先登录");
+  //       // 跳转页面(路由)
+  //       setTimeout(() => {
+  //         this.$router.push("/index");
+  //       }, 1000);
+  //     }
+  //   });
+  //     }
 };
 </script>
 <style >
