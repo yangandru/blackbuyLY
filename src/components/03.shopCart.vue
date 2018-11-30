@@ -129,15 +129,17 @@
                                 class="button"
                                 onclick="javascript:location.href='/index.html';"
                             >继续购物</button>
-                            <!-- 地址肯定不能写死
+                            <!-- 地址肯定不能写死  
                                 声明式导航 地址 现在的写法是固定的
-                                    1. 使用编程时导航 需要修改 结构 删除 routerlink 绑定点击事件
-                                    2. selectedIds
+                                    1.使用编程式导航 需要修改 结构 删除 routerlink 绑定点击事件
+                                    2.selectedIds
                                         如果使用watch来实现
                                             watch 去观察 goodlist deep
-                                            数据改变之后 从新为 selectedIds赋值
+                                            数据改变之后 重新为 selectedIds赋值
                                         使用计算属性
-                                            只需要额外增加一个计算属性即可 selectedIds -->
+                                            只需要额外的增加一个计算属性即可 selectedIds
+                            
+                             -->
                             <router-link :to="'/order/'+selectedIds">
                                 <button
                                     class="submit"
@@ -219,21 +221,20 @@ export default {
       });
       return price;
     },
-    //选中商品的ID
+    // 选中商品的id
     selectedIds(){
-        let ids = "";
+        let ids = '';
         this.goodsList.forEach(v=>{
             if(v.isSelected==true){
                 ids+=v.id;
-                ids+=","
+                ids+=','
             }
         })
-        // 去掉最后的
-        ids= ids.slice(0,ids.length-1);
+        // 去掉最后的,
+        ids = ids.slice(0,ids.length-1);
         // 返回ids
         return ids;
     }
-
   },
   //   生命周期函数
   created() {
