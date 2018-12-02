@@ -141,8 +141,8 @@ export default {
       //   这里要用箭头函数 绑定上下文中的this
       //   .then(function(result) {
       .then(result => {
-        // console.log(this);
-        // console.log(result);
+        // //console.log(this);
+        // //console.log(result);
         this.catelist = result.data.message.catelist;
         this.sliderlist = result.data.message.sliderlist;
         this.toplist = result.data.message.toplist;
@@ -151,7 +151,7 @@ export default {
     this.$axios
       .get("http://111.230.232.110:8899/site/goods/getgoodsgroup")
       .then(result => {
-        // console.log(result);
+        // //console.log(result);
         this.groupList = result.data.message;
       });
   },
@@ -161,11 +161,11 @@ export default {
 //     // 函数
 //     //
 //     shortTime(value) {
-//       //   console.log(value);
+//       //   //console.log(value);
 //       // 处理时间数据
 //       // 返回处理之后的数据
 //       // 要显示什么 就返回什么
-//       console.log(moment(value).format("YYYY😘MM😘DD👍"));
+//       //console.log(moment(value).format("YYYY😘MM😘DD👍"));
 //       //   return '😁😁😁😁😁😁';
 //       return moment(value).format("YYYY😘MM😘DD👍");
 //     }

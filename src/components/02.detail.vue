@@ -277,7 +277,7 @@ export default {
           `http://111.230.232.110:8899/site/goods/getgoodsinfo/${this.artID}`
         )
         .then(result => {
-          // console.log(result);
+          // //console.log(result);
           // 商品详情
           this.goodsinfo = result.data.message.goodsinfo;
           //   热卖商品
@@ -307,7 +307,7 @@ export default {
           }?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`
         )
         .then(result => {
-          // console.log(result);
+          // //console.log(result);
           // 评论信息
           this.comments = result.data.message;
           // 总个数
@@ -316,14 +316,14 @@ export default {
     },
     // 页码改变
     pageChange(pageIndex) {
-      //   console.log(pageSize);
+      //   //console.log(pageSize);
       this.pageIndex = pageIndex;
       // 重新获取这一页的数据
       this.getComments();
     },
     // 页容量改变
     sizeChange(pageSize) {
-      // console.log(pageSize);
+      // //console.log(pageSize);
       this.pageSize = pageSize;
       // 重新获取评论数据即可
       this.getComments();
@@ -341,7 +341,7 @@ export default {
             commenttxt: this.comment
           })
           .then(result => {
-            // console.log(result)
+            // //console.log(result)
             // 判断是否成功
             if (result.data.status == 0) {
               // 提示用户
@@ -378,13 +378,13 @@ export default {
   },
   // 生命周期函数
   created() {
-    console.log(this.$route.params);
+    //console.log(this.$route.params);
     this.initData();
   },
   // 侦听器
   watch: {
     $route(newVal, oldVal) {
-      //   console.log('数据变了');
+      //   //console.log('数据变了');
       // 重新获取数据即可
       //   this.created();
       // 设置 图片数组为空 让放大镜组件 重新生成

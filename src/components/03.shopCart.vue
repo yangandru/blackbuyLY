@@ -140,11 +140,12 @@
                                             只需要额外的增加一个计算属性即可 selectedIds
                             
                              -->
-                            <router-link :to="'/order/'+selectedIds">
+                            <!-- <router-link  :to="'/order/'+selectedIds"> -->
                                 <button
+                                    @click="toOrder"
                                     class="submit"
                                 >立即结算</button>
-                            </router-link>
+                            <!-- </router-link> -->
                         </div>
                     </div>
                     <!--购物车底部-->
@@ -193,6 +194,17 @@ export default {
             message: "已取消删除"
           });
         });
+    },
+    // 去结算页
+    toOrder(){
+        // 如果没有选中商品 无法跳转
+        if(this.selectedCount==0){
+            // 提示用户
+            this.$message.warning('哥们,没东西咋提交呀!买点呗 (* ￣3)(ε￣ *)');
+        }else{
+            // 编程式导航
+            this.$router.push('/order/'+this.selectedIds)
+        }
     }
   },
   // 计算属性
@@ -246,12 +258,12 @@ export default {
       ids += ",";
     }
     // 取消最后一个,
-    // console.log(ids.slice(0,ids.length-1));
+    // //console.log(ids.slice(0,ids.length-1));
     ids = ids.slice(0, ids.length - 1);
 
     // 调用接口
     this.$axios.get(`site/comment/getshopcargoods/${ids}`).then(result => {
-      //   console.log(result);
+      //   //console.log(result);
       // 第一次赋值的时候 message的每个对象中 没有 isSelected
       //   this.goodsList = result.data.message;
       // 服务器返回的数据中是没有个数的 所以要自行拼接
@@ -264,7 +276,7 @@ export default {
         // 如果是在组件中使用set 需要通过this.$set才可以访问
         // this.$set(v, "isSelected", true);
       });
-      //   console.log(this.goodsList);
+      //   //console.log(this.goodsList);
       // 如果 是先加字段 再 赋值给 vue的数据 就不需要使用$set
       this.goodsList = result.data.message;
     });
@@ -274,15 +286,15 @@ export default {
     goodsList: {
       // 引用类型 两次的值都是一样的
       handler: function(val, oldVal) {
-        // console.log(val);
-        //   console.log(oldVal);
+        // //console.log(val);
+        //   //console.log(oldVal);
         // 最终要的数据是 {id:个数}
         let obj = {};
         val.forEach(v => {
           // 动态的增加属性
           obj[v.id] = v.buycount;
         });
-        // console.log(obj);
+        // //console.log(obj);
         // 同步修改 Vuex中的数据
         this.$store.commit("updateCartData", obj);
         // 可以直接访问到 但还是建议 使用 官方的方法进行修改

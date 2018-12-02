@@ -244,7 +244,7 @@ export default {
   data: function() {
     // 自定义校验规则 函数 会被element-ui内部调用
     var validateMobile = (rule, value, callback) => {
-      //  console.log(value)
+      //  //console.log(value)
       // 空值判断
       if (value === "") {
         callback(new Error("请输入手机号"));
@@ -263,7 +263,7 @@ export default {
     };
     // 自定义校验规则 函数 会被element-ui内部调用
     var validateEmail = (rule, value, callback) => {
-      //  console.log(value)
+      //  //console.log(value)
       // 空值判断
       if (value === "") {
         callback(new Error("请输入邮箱地址"));
@@ -282,7 +282,7 @@ export default {
     };
     // 自定义校验规则 函数 会被element-ui内部调用
     var validatePostCode = (rule, value, callback) => {
-      //  console.log(value)
+      //  //console.log(value)
       // 空值判断
       if (value === "") {
         callback(new Error("请输入邮编"));
@@ -312,13 +312,13 @@ export default {
       // element-ui的数据
       ruleForm: {
         // 收货人姓名
-        accept_name: "黎少",
+        accept_name: "改改",
         // 收货人地址
-        address: "深圳宝安区",
+        address: "中粮商务公园3栋楼下桥洞4号洞5号床铺",
         // 收货人手机号
-        mobile: "18801422540",
+        mobile: "18787878787",
         // 邮箱地址
-        email: "12698765071",
+        email: "8787@qq.com",
         // 邮编
         post_code: "440306",
         // 地区
@@ -343,7 +343,7 @@ export default {
         // 运费
         expressMoment: 24,
         // 备注信息
-        message: "记得我们约定"
+        message: "记得按时发货哦, (づ￣ 3￣)づ"
       },
       // 验证规则
       rules: {
@@ -375,12 +375,12 @@ export default {
   },
   methods: {
     selectedArea(newArea) {
-      // console.log(newArea);
+      // //console.log(newArea);
       this.ruleForm.area = newArea;
     },
     // 切换快递
     changeExpress(price) {
-      // console.log(price);
+      // //console.log(price);
       // this.ruleForm.expressMoment = price;
     },
     // 提交订单
@@ -405,7 +405,7 @@ export default {
           this.$axios
             .post("site/validate/order/setorder", this.ruleForm)
             .then(result => {
-              // console.log(result);
+              // //console.log(result);
               this.$Message.success("订单提交成功");
               // 跳转路由
               this.$router.push("/payMoney/"+result.data.message.orderid);
@@ -415,7 +415,7 @@ export default {
               })
             });
         } else {
-          // console.log('error submit!!');
+          // //console.log('error submit!!');
           this.$Message.warning("数据不完整,请检查");
           return false;
         }
@@ -425,15 +425,15 @@ export default {
   // 获取传递过来的id 调用接口
   created() {
     // // 路由对象 可以用来跳转页面
-    //   console.log(this.$router);
+    //   //console.log(this.$router);
     // 路由跳转 携带的信息
-    console.log(this.$route);
+    //console.log(this.$route);
     this.ids = this.$route.params.ids;
     // 调用接口
     this.$axios
       .get(`site/validate/order/getgoodslist/${this.ids}`)
       .then(result => {
-        //   console.log(result);
+        //   //console.log(result);
         // buycount 服务器是不知道的 我们要人为的 设置
         this.goodsList = result.data.message;
         // 动态的修改buycount的值
@@ -447,8 +447,8 @@ export default {
           // 累加总金额
           this.totalPrice += v.buycount * v.sell_price;
         });
-        // console.log(this.goodsList);
-        // console.log(result);
+        // //console.log(this.goodsList);
+        // //console.log(result);
       });
   },
   // 组件内注册
@@ -457,7 +457,7 @@ export default {
   //   beforeCreate() { // 虽然比created 早了一些 但还是 一闪而过
   // // 查询是否登录
   // this.$axios.get("site/account/islogin").then(result => {
-  //   //   console.log(result);
+  //   //   //console.log(result);
   //   if (result.data.code == "nologin") {
   //     // 提示用户
   //     this.$Message.warning("请先登录");

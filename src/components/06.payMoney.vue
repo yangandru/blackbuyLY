@@ -108,14 +108,14 @@ export default {
   },
   // 生命周期函数
   created() {
-    // console.log(this.$route);
+    // //console.log(this.$route);
     // 获取id
     this.orderId = this.$route.params.orderId;
     // 调用接口
     this.$axios
       .get(`site/validate/order/getorder/${this.orderId}`)
       .then(result => {
-        // console.log(result);
+        // //console.log(result);
         this.orderInfo = result.data.message[0];
       });
     // 开启定时器 间隔询问服务器订单的状态
@@ -124,7 +124,7 @@ export default {
       this.$axios
         .get(`site/validate/order/getorder/${this.orderId}`)
         .then(result => {
-          // console.log(result);
+          // //console.log(result);
           //   this.orderInfo = result.data.message[0];
           // 判断订单的状态是什么
           if (result.data.message[0].status === 2) {
@@ -141,7 +141,7 @@ export default {
   },
   // 生命周期函数 被销毁之后触发
   destroyed() {
-    //   console.log('我被干掉啦!!!');
+    //   //console.log('我被干掉啦!!!');
     clearInterval(this.interId);
   }
 };
